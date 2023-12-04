@@ -13,15 +13,15 @@ userRouter.post("/signup",async(req,res)=>{
         if(already){
             res.status(200).send({"user_Already_registered":already})
         }else{
-            bcrypt.hash(password, 5, async(err, hash)=> {
-                if(err){
-                    res.status(200).send("passwordNotHashed")
-                }else{
-                    const user = new userModel({name,email,password:hash});
+            // bcrypt.hash(password, 5, async(err, hash)=> {
+                // if(err){
+                //     res.status(200).send("passwordNotHashed")
+                // }else{
+                    const user = new userModel({name,email,password});
                     await user.save();
                     res.status(200).send({"userAdded":user})
-                }
-            });
+                // }
+            // });
         }
 
     }
@@ -46,15 +46,15 @@ userRouter.get("/",async(req,res)=>{
         try{
             let user = await userModel.findOne({email});
             if(user){
-                bcrypt.compare(password, user.password, async(err, result)=> {
+                // bcrypt.compare(password, user.password, async(err, result)=> {
                     // result == true
-                    if(result){
+                    if(user.password==password){
                         var token = jwt.sign({ email: email }, 'Ankit',{expiresIn:'2h'});
                         res.status(200).send({"login_successful":user,token})
                     }else{
                         res.status(200).send("wrong_Password")
                     }
-                });
+                // });
             }else{
                 res.status(200).send("wrong_Email")
             }
